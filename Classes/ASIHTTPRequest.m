@@ -1347,51 +1347,56 @@ static NSOperationQueue *sharedQueue = nil;
     //
 	// Create the stream for the request
 	//
+    // Will store the old stream that was using this connection (if there was one) so we can clean it up once we've opened our own stream
+    NSInputStream *oldStream = nil;
+	
 
 	[self setReadStreamIsScheduled:NO];
-	if ([self assignPostBodyReadStream]) {
-        [self setReadStream:[NSMakeCollectable(CFReadStreamCreateForStreamedHTTPRequest(kCFAllocatorDefault, request,(CFReadStreamRef)[self postBodyReadStream])) autorelease]]; 
+    if (false /*&& [self spdyAvailable:request]*/) {
+        // Look up connectionInfo for spdy:host:port
+        // [self setReadStream:[spdy createStreamFromRequest:request body:[self postBodyReadStream]]];
+        // attached request and readStream to connectionInfo.
     } else {
-        [self setReadStream:[NSMakeCollectable(CFReadStreamCreateForHTTPRequest(kCFAllocatorDefault, request)) autorelease]];
-    }
-	if (![self readStream]) {
-		[self failWithError:[NSError errorWithDomain:NetworkRequestErrorDomain code:ASIInternalErrorWhileBuildingRequestType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to create read stream",NSLocalizedDescriptionKey,nil]]];
-        return;
-    }
+        if ([self assignPostBodyReadStream]) {
+            [self setReadStream:[NSMakeCollectable(CFReadStreamCreateForStreamedHTTPRequest(kCFAllocatorDefault, request,(CFReadStreamRef)[self postBodyReadStream])) autorelease]]; 
+        } else {
+            [self setReadStream:[NSMakeCollectable(CFReadStreamCreateForHTTPRequest(kCFAllocatorDefault, request)) autorelease]];
+        }
+        if (![self readStream]) {
+            [self failWithError:[NSError errorWithDomain:NetworkRequestErrorDomain code:ASIInternalErrorWhileBuildingRequestType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to create read stream",NSLocalizedDescriptionKey,nil]]];
+            return;
+        }
     
+        if([[[[self url] scheme] lowercaseString] isEqualToString:@"https"]) {
+            [self setSslProperties];
+        }
+
+        if ([self proxyHost] && [self proxyPort]) {
+            [self setProxyProperties];
+        }
+
+
+        //
+        // Handle persistent connections
+        //
+	
+        [ASIHTTPRequest expirePersistentConnections];
+
+        if (![[self url] host] || ![[self url] scheme]) {
+            [self setConnectionInfo:nil];
+            [self setShouldAttemptPersistentConnection:NO];
+        }
+	
+        // Use a persistent connection if possible
+        if ([self shouldAttemptPersistentConnection]) {
+            oldStream = [self assignConnectionInfo];
+        } else {
+            #if DEBUG_PERSISTENT_CONNECTIONS
+            ASI_DEBUG_LOG(@"[CONNECTION] Request %@ will not use a persistent connection",self);
+            #endif
+        }
+	}
     
-    if([[[[self url] scheme] lowercaseString] isEqualToString:@"https"]) {
-        [self setSslProperties];
-    }
-
-    if ([self proxyHost] && [self proxyPort]) {
-        [self setProxyProperties];
-    }
-
-
-	//
-	// Handle persistent connections
-	//
-	
-	[ASIHTTPRequest expirePersistentConnections];
-
-	if (![[self url] host] || ![[self url] scheme]) {
-		[self setConnectionInfo:nil];
-		[self setShouldAttemptPersistentConnection:NO];
-	}
-	
-	// Will store the old stream that was using this connection (if there was one) so we can clean it up once we've opened our own stream
-	NSInputStream *oldStream = nil;
-	
-	// Use a persistent connection if possible
-	if ([self shouldAttemptPersistentConnection]) {
-		oldStream = [self assignConnectionInfo];
-	} else {
-		#if DEBUG_PERSISTENT_CONNECTIONS
-		ASI_DEBUG_LOG(@"[CONNECTION] Request %@ will not use a persistent connection",self);
-		#endif
-	}
-	
 	// Schedule the stream
 	if (![self readStreamIsScheduled] && (!throttleWakeUpTime || [throttleWakeUpTime timeIntervalSinceDate:[NSDate date]] < 0)) {
 		[self scheduleReadStream];
@@ -1400,13 +1405,13 @@ static NSOperationQueue *sharedQueue = nil;
 	BOOL streamSuccessfullyOpened = NO;
 
 
-   // Start the HTTP connection
-	CFStreamClientContext ctxt = {0, self, NULL, NULL, NULL};
+    // Start the HTTP connection
+    CFStreamClientContext ctxt = {0, self, NULL, NULL, NULL};
     if (CFReadStreamSetClient((CFReadStreamRef)[self readStream], kNetworkEvents, ReadStreamClientCallBack, &ctxt)) {
-		if (CFReadStreamOpen((CFReadStreamRef)[self readStream])) {
-			streamSuccessfullyOpened = YES;
-		}
-	}
+        if (CFReadStreamOpen((CFReadStreamRef)[self readStream])) {
+            streamSuccessfullyOpened = YES;
+        }
+    }
 	
 	// Here, we'll close the stream that was previously using this connection, if there was one
 	// We've kept it open until now (when we've just opened a new stream) so that the new stream can make use of the old connection
