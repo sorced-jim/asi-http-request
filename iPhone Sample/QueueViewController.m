@@ -38,7 +38,7 @@
 	[networkQueue setDelegate:self];
 	
 	ASIHTTPRequest *request;
-	request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:@"http://allseeing-i.com/ASIHTTPRequest/tests/images/small-image.jpg"]];
+	request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:@"https://www.google.com/logos/2012/rossini12-hp.jpg"]];
 	[request setDownloadDestinationPath:[[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"1.png"]];
 	[request setDownloadProgressDelegate:imageProgressIndicator1];
     [request setUserInfo:[NSDictionary dictionaryWithObject:@"request1" forKey:@"name"]];

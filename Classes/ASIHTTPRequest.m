@@ -22,10 +22,10 @@
 #import "ASIInputStream.h"
 #import "ASIDataDecompressor.h"
 #import "ASIDataCompressor.h"
-#import "SPDY/SpdySession.h"
+#import "SPDY/SPDY.h"
 
 // Automatically set on build
-NSString *ASIHTTPRequestVersion = @"v1.8.1-61 2011-09-19";
+NSString *ASIHTTPRequestVersion = @"v1.8.1-61 2011-09-19 (spdy)";
 
 static NSString *defaultUserAgent = nil;
 
@@ -1352,12 +1352,16 @@ static NSOperationQueue *sharedQueue = nil;
 	
 
 	[self setReadStreamIsScheduled:NO];
-    if (false /*&& [self spdyAvailable:request]*/) {
+    BOOL hasPostBody = [self assignPostBodyReadStream];
+    BOOL spdy = [[self.url host] hasSuffix:@"google.com"];
+    if (spdy) {
         // Look up connectionInfo for spdy:host:port
-        // [self setReadStream:[spdy createStreamFromRequest:request body:[self postBodyReadStream]]];
+        [self setReadStream:[NSMakeCollectable(SpdyCreateSpdyReadStream(kCFAllocatorDefault, request, (CFReadStreamRef)[self postBodyReadStream])) autorelease]];
+        [self setShouldAttemptPersistentConnection:NO];
+
         // attached request and readStream to connectionInfo.
     } else {
-        if ([self assignPostBodyReadStream]) {
+        if (hasPostBody) {
             [self setReadStream:[NSMakeCollectable(CFReadStreamCreateForStreamedHTTPRequest(kCFAllocatorDefault, request,(CFReadStreamRef)[self postBodyReadStream])) autorelease]]; 
         } else {
             [self setReadStream:[NSMakeCollectable(CFReadStreamCreateForHTTPRequest(kCFAllocatorDefault, request)) autorelease]];
@@ -1366,7 +1370,7 @@ static NSOperationQueue *sharedQueue = nil;
             [self failWithError:[NSError errorWithDomain:NetworkRequestErrorDomain code:ASIInternalErrorWhileBuildingRequestType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to create read stream",NSLocalizedDescriptionKey,nil]]];
             return;
         }
-    
+
         if([[[[self url] scheme] lowercaseString] isEqualToString:@"https"]) {
             [self setSslProperties];
         }
@@ -1374,28 +1378,28 @@ static NSOperationQueue *sharedQueue = nil;
         if ([self proxyHost] && [self proxyPort]) {
             [self setProxyProperties];
         }
+    }
 
 
-        //
-        // Handle persistent connections
-        //
+    //
+    // Handle persistent connections
+    //
 	
-        [ASIHTTPRequest expirePersistentConnections];
+    [ASIHTTPRequest expirePersistentConnections];
 
-        if (![[self url] host] || ![[self url] scheme]) {
-            [self setConnectionInfo:nil];
-            [self setShouldAttemptPersistentConnection:NO];
-        }
+    if (![[self url] host] || ![[self url] scheme]) {
+        [self setConnectionInfo:nil];
+        [self setShouldAttemptPersistentConnection:NO];
+    }
 	
-        // Use a persistent connection if possible
-        if ([self shouldAttemptPersistentConnection]) {
-            oldStream = [self assignConnectionInfo];
-        } else {
-            #if DEBUG_PERSISTENT_CONNECTIONS
-            ASI_DEBUG_LOG(@"[CONNECTION] Request %@ will not use a persistent connection",self);
-            #endif
-        }
-	}
+    // Use a persistent connection if possible
+    if ([self shouldAttemptPersistentConnection]) {
+        oldStream = [self assignConnectionInfo];
+    } else {
+        #if DEBUG_PERSISTENT_CONNECTIONS
+        ASI_DEBUG_LOG(@"[CONNECTION] Request %@ will not use a persistent connection",self);
+        #endif
+    }
     
 	// Schedule the stream
 	if (![self readStreamIsScheduled] && (!throttleWakeUpTime || [throttleWakeUpTime timeIntervalSinceDate:[NSDate date]] < 0)) {

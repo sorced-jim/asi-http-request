@@ -90,7 +90,7 @@ static NSString *intro = @"Demonstrates fetching a web page synchronously, the H
 		if ([self request]) {
 			[urlField setText:[[[self request] url] absoluteString]];
 		} else {
-			[urlField setText:@"http://allseeing-i.com"];
+			[urlField setText:@"https://www.google.com/"];
 		}
 		
 		
