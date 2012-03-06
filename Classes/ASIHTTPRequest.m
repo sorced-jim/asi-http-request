@@ -39,6 +39,9 @@ static const CFOptionFlags kNetworkEvents =  kCFStreamEventHasBytesAvailable | k
 static NSMutableArray *sessionCredentialsStore = nil;
 static NSMutableArray *sessionProxyCredentialsStore = nil;
 
+static BOOL spdyEnabled = NO;
+static NSMutableDictionary *spdyHostsDict = nil;
+
 // This lock mediates access to session credentials
 static NSRecursiveLock *sessionCredentialsLock = nil;
 
@@ -1351,9 +1354,13 @@ static NSOperationQueue *sharedQueue = nil;
     NSInputStream *oldStream = nil;
 	
 
-	[self setReadStreamIsScheduled:NO];
+    [self setReadStreamIsScheduled:NO];
     BOOL hasPostBody = [self assignPostBodyReadStream];
-    BOOL spdy = [[self.url host] hasSuffix:@"google.com"];
+    BOOL spdy = spdyEnabled;
+    if (spdy) {
+        NSNumber *hostEnabled = [spdyHostsDict objectForKey:[self.url host]];
+        spdy = hostEnabled == nil || [hostEnabled boolValue];
+    }
     if (spdy) {
         // Look up connectionInfo for spdy:host:port
         [self setReadStream:[NSMakeCollectable(SpdyCreateSpdyReadStream(kCFAllocatorDefault, request, (CFReadStreamRef)[self postBodyReadStream])) autorelease]];
@@ -3689,6 +3696,12 @@ static NSOperationQueue *sharedQueue = nil;
 				return;
 			}
 		}
+        
+        if ([[underlyingError domain] isEqualToString:(NSString *)kSpdyErrorDomain] && [underlyingError code] == kSpdyConnectionNotSpdy) {
+            [spdyHostsDict setObject:[NSNumber numberWithBool:NO] forKey:[self.url host]];
+            [self startRequest];
+            return;
+        }
 		
 		NSString *reason = @"A connection failure occurred";
 		
@@ -4917,6 +4930,13 @@ static NSOperationQueue *sharedQueue = nil;
 	}
 	[formatter setDateFormat:[NSString stringWithFormat:@"%@dd MMM yyyy HH:mm%@ z",day,seconds]];
 	return [formatter dateFromString:string];
+}
+
++ (void)enableSpdy:(BOOL)enable {
+    spdyEnabled = enable;
+    if (spdyEnabled && spdyHostsDict == nil) {
+        spdyHostsDict = [[NSMutableDictionary alloc]initWithCapacity:13];
+    }
 }
 
 + (void)parseMimeType:(NSString **)mimeType andResponseEncoding:(NSStringEncoding *)stringEncoding fromContentType:(NSString *)contentType

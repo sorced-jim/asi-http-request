@@ -7,13 +7,15 @@
 //
 
 #import "iPadSampleAppDelegate.h"
+#import "ASIHTTPRequest.h"
 
 @implementation iPadSampleAppDelegate
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application
 {
-	[window addSubview:[splitViewController view]];
-	[window makeKeyAndVisible];
+    [ASIHTTPRequest enableSpdy:YES];
+    [window addSubview:[splitViewController view]];
+    [window makeKeyAndVisible];
 }
 
 - (void)dealloc {
