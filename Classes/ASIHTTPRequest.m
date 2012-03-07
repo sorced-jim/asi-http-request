@@ -1359,7 +1359,7 @@ static NSOperationQueue *sharedQueue = nil;
     BOOL spdy = spdyEnabled;
     if (spdy) {
         NSNumber *hostEnabled = [spdyHostsDict objectForKey:[self.url host]];
-        spdy = hostEnabled == nil || [hostEnabled boolValue];
+        spdy = (hostEnabled == nil || [hostEnabled boolValue]) && [[self.url scheme] isEqualToString:@"https"];
     }
     if (spdy) {
         // Look up connectionInfo for spdy:host:port
