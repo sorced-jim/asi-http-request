@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		380A21FC14F4546B00262B13 /* libSPDY.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 380A21FB14F4546B00262B13 /* libSPDY.a */; };
+		385B81161508281C00DCD426 /* libSPDY.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B81151508281C00DCD426 /* libSPDY.a */; };
+		385B81181508281C00DCD426 /* libSPDY.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B81151508281C00DCD426 /* libSPDY.a */; };
+		385B81191508287800DCD426 /* libSPDY.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 385B81151508281C00DCD426 /* libSPDY.a */; };
 		B50C1823121C26DB0055FCAB /* ClientCertificateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B50C1822121C26DB0055FCAB /* ClientCertificateTests.m */; };
 		B50C182C121C26FA0055FCAB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B50C182B121C26FA0055FCAB /* Security.framework */; };
 		B50C1848121C27510055FCAB /* client.p12 in Resources */ = {isa = PBXBuildFile; fileRef = B50C1847121C27510055FCAB /* client.p12 */; };
@@ -63,7 +65,7 @@
 		B576D52D11C7CEFA0059B815 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B576D52C11C7CEFA0059B815 /* Foundation.framework */; };
 		B576D70411C7F34D0059B815 /* iphone-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B55B60730F765A990064029C /* iphone-icon.png */; };
 		B576D70B11C7F34D0059B815 /* ASIFormDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B55B60460F765A320064029C /* ASIFormDataRequest.m */; };
-		B576D70C11C7F34D0059B815 /* ASIHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B55B60480F765A320064029C /* ASIHTTPRequest.m */; settings = {COMPILER_FLAGS = "-I../SPDY-for-iPhone/build/include"; }; };
+		B576D70C11C7F34D0059B815 /* ASIHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B55B60480F765A320064029C /* ASIHTTPRequest.m */; };
 		B576D70D11C7F34D0059B815 /* ASINetworkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B55B604A0F765A320064029C /* ASINetworkQueue.m */; };
 		B576D70F11C7F34D0059B815 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B55B60600F765A750064029C /* main.m */; };
 		B576D71011C7F34D0059B815 /* QueueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B55B60670F765A930064029C /* QueueViewController.m */; };
@@ -144,7 +146,8 @@
 
 /* Begin PBXFileReference section */
 		1D6058910D05DD3D006BFB54 /* ASIHTTPRequest iPhone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ASIHTTPRequest iPhone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		380A21FB14F4546B00262B13 /* libSPDY.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSPDY.a; path = "../SPDY-for-iPhone/build/lib/libSPDY.a"; sourceTree = "<group>"; };
+		385B81121508272600DCD426 /* SPDY.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SPDY.h; path = ../../twist2/client/iOS/Spdy/SPDY.h; sourceTree = "<group>"; };
+		385B81151508281C00DCD426 /* libSPDY.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libSPDY.a; sourceTree = "<group>"; };
 		B50C1821121C26DB0055FCAB /* ClientCertificateTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientCertificateTests.h; sourceTree = "<group>"; };
 		B50C1822121C26DB0055FCAB /* ClientCertificateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientCertificateTests.m; sourceTree = "<group>"; };
 		B50C182B121C26FA0055FCAB /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -286,6 +289,7 @@
 				DADCEB9012D5050600958557 /* UIKit.framework in Frameworks */,
 				DADCEB9912D5057700958557 /* libxml2.dylib in Frameworks */,
 				DADCEB9F12D505AB00958557 /* libz.dylib in Frameworks */,
+				385B81161508281C00DCD426 /* libSPDY.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +307,7 @@
 				DADCEB9A12D5058500958557 /* libxml2.dylib in Frameworks */,
 				DADCEBA012D505B900958557 /* libz.dylib in Frameworks */,
 				B581DDCA12FDFEEE003BA9D0 /* GHUnitIOS.framework in Frameworks */,
+				385B81191508287800DCD426 /* libSPDY.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,7 +315,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				380A21FC14F4546B00262B13 /* libSPDY.a in Frameworks */,
 				DADCEB8612D503AD00958557 /* CFNetwork.framework in Frameworks */,
 				DADCEB8B12D5040C00958557 /* CoreGraphics.framework in Frameworks */,
 				B576D71D11C7F34D0059B815 /* Foundation.framework in Frameworks */,
@@ -319,6 +323,7 @@
 				DADCEB9212D5051200958557 /* UIKit.framework in Frameworks */,
 				DADCEB9B12D5058C00958557 /* libxml2.dylib in Frameworks */,
 				DADCEBA112D505C700958557 /* libz.dylib in Frameworks */,
+				385B81181508281C00DCD426 /* libSPDY.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,7 +374,6 @@
 		29B97314FDCFA39411CA2CEA /* iPhone */ = {
 			isa = PBXGroup;
 			children = (
-				380A21FB14F4546B00262B13 /* libSPDY.a */,
 				B5D1454E1029E20D004379B8 /* External */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
@@ -438,6 +442,15 @@
 				DADCEB9E12D505AB00958557 /* libz.dylib */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		385B81131508273B00DCD426 /* SPDY */ = {
+			isa = PBXGroup;
+			children = (
+				385B81151508281C00DCD426 /* libSPDY.a */,
+				385B81121508272600DCD426 /* SPDY.h */,
+			);
+			name = SPDY;
 			sourceTree = "<group>";
 		};
 		B52329A911CA3380006C6E5A /* UI helpers */ = {
@@ -551,6 +564,7 @@
 		B5D1454E1029E20D004379B8 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				385B81131508273B00DCD426 /* SPDY */,
 				B55252B111D22E2200F9B170 /* Reachability */,
 			);
 			path = External;
@@ -843,6 +857,11 @@
 				HEADER_SEARCH_PATHS = "${SDK_DIR}/usr/include/libxml2";
 				INFOPLIST_FILE = "iPhone Sample/iPhoneInfo.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../SPDY-for-iPhone/build/lib\"",
+					"\"$(SRCROOT)/External\"",
+				);
 				PRODUCT_NAME = "ASIHTTPRequest iPhone";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -861,6 +880,11 @@
 				HEADER_SEARCH_PATHS = "${SDK_DIR}/usr/include/libxml2";
 				INFOPLIST_FILE = "iPhone Sample/iPhoneInfo.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../SPDY-for-iPhone/build/lib\"",
+					"\"$(SRCROOT)/External\"",
+				);
 				PRODUCT_NAME = "ASIHTTPRequest iPhone";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -888,7 +912,11 @@
 				HEADER_SEARCH_PATHS = "${SDK_DIR}/usr/include/libxml2";
 				INFOPLIST_FILE = "iPhone Sample/Tests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.2.2;
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../SPDY-for-iPhone/build/lib\"",
+					"\"$(SRCROOT)/External\"",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -920,7 +948,11 @@
 				INFOPLIST_FILE = "iPhone Sample/Tests-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.2.2;
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../SPDY-for-iPhone/build/lib\"",
+					"\"$(SRCROOT)/External\"",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -950,6 +982,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../SPDY-for-iPhone/build/lib\"",
+					"\"$(SRCROOT)/External\"",
 				);
 				PRODUCT_NAME = "ASIHTTPRequest iPad";
 				TARGETED_DEVICE_FAMILY = 2;
@@ -972,6 +1005,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../SPDY-for-iPhone/build/lib\"",
+					"\"$(SRCROOT)/External\"",
 				);
 				PRODUCT_NAME = "ASIHTTPRequest iPad";
 				TARGETED_DEVICE_FAMILY = 2;
